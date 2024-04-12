@@ -16,6 +16,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import prisma from "@/lib/prisma";
+import { createUrl } from "@/actions/create_url";
+import Link from "next/link";
+import { fecthUrlByFull } from "@/actions/fetch_url_full";
+import { useToast } from "@/components/ui/use-toast";
 
 
 const formSchema = z.object({
@@ -24,6 +29,8 @@ const formSchema = z.object({
 
 
 export default function Home() {
+  const { toast } = useToast()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,23 +41,53 @@ export default function Home() {
   const [shorter,setshorter] = useState('');
 
 
+  function removeFirstCharacter(inputString: string): string {
+    // Check if the string is not empty
+    if (inputString.length > 0) {
+        // Return the substring starting from index 1 (excluding the first character)
+        return inputString.substring(1);
+    } else {
+        // If the string is empty, return it as is
+        return inputString;
+    }
+}
+
 function generateShortUrl(longUrl: string): string {
   const hash = crypto.createHash('sha256').update(longUrl).digest('hex');
-  const shortUrl = hash.substr(0, 8);
+  const shortUrl = removeFirstCharacter(hash.substr(0, 8));
   return shortUrl;
 }
 
-function onSubmit(values: z.infer<typeof formSchema>) {
- const shorter = '/' + generateShortUrl(values.url);
+async  function onSubmit(values: z.infer<typeof formSchema>) {
+  const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
 
-  console.log(shorter);
+ const url = await fecthUrlByFull(values.url);
+ 
+
+if (!url){
+  const shorter = generateShortUrl(values.url);
+  const newUrl = await createUrl(values.url,shorter);
+  setshorter(baseUrl + shorter ) 
+}else{
+  setshorter(baseUrl + url.shorterUrl) 
+}
 }
 
-const vercelUrl  = 'https://www.bla.com'
+
+  async function copy(txt:string) {
+    if (navigator){
+      await navigator.clipboard.writeText(txt);
+
+       toast({
+        title: "Copy",
+        description: "Copy",
+      })
+    }
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className='flex flex-col'>
+      <div className='flex flex-col items-center'>
         <h1 className="text-3xl underline">My Tools</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -73,7 +110,25 @@ const vercelUrl  = 'https://www.bla.com'
           <Button type="submit">Submit</Button>
           </form>
         </Form>
-        {shorter.length > 0 ? <p>{shorter}</p> : <p>not yet</p>}
+
+        {shorter.length > 0 ? 
+       
+            <div className="flex flex-col justify-center items-center">
+              <Link href={shorter}> 
+                <h2 className="text-2xl underline">
+                  Here is your shorter url
+                </h2>
+              </Link>
+              <p>{shorter}</p>
+              <div className="flex justify-center  items-center"> 
+              
+              <Button onClick={ () => copy(shorter) }>Copy</Button>
+              <Link href={shorter}>Open</Link>
+              </div>
+          </div>
+       
+         :
+         <p>not yet</p>}
       </div>
     </main>
   );

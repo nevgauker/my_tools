@@ -1,21 +1,23 @@
 'use client'
-import { useEffect } from "react";
-import { usePathname, useSearchParams } from 'next/navigation'
+
+import { fecthUrl } from "@/actions/fetch_url";
+
+export default async function Shorter({ params }: {params: {shorter : string }}) {
 
 
+    async function redirect(){
+      console.log(params.shorter)
+      const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
+      const url = await fecthUrl(params.shorter);
+      console.log(url);
 
-export default function Shorter() {
-    const pathname = usePathname()
-    const searchParams = useSearchParams()
+      if (url){
+        //redirect
+        window.location.assign(url.url);
+      }
 
-
-
-    useEffect(() => {
-
-        console.log(pathname);
-        console.log(searchParams);
-       // window.location.assign('https://www.rotemnev.com/')
-    },[])
+    }
+    redirect()
     return <></>
-
 }
+
