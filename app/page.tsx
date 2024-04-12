@@ -77,7 +77,6 @@ if (!url){
   async function copy(txt:string) {
     if (navigator){
       await navigator.clipboard.writeText(txt);
-
        toast({
         title: "Copy",
         description: "Copy",

@@ -7,3 +7,9 @@ export async function fecthUrl(shorter:string) {
     return url;
 
 }
+
+export async function fecthUrlByFull(url:string) {
+    const urlObj = await prisma.url.findFirst({ where: { url:url } });
+    return urlObj;
+
+}
