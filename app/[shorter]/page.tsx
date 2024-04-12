@@ -4,7 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 
 
 
-export default function shorter() {
+export default function Shorter() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
