@@ -4,7 +4,8 @@ import { NextPage } from "next"
 const Home:NextPage = () => {
   return (
     <Container>
-      Home
+      <h1>Useful Tools</h1>
+
     </Container>
   )
 }

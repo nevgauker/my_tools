@@ -23,6 +23,11 @@ import Link from "next/link";
 import { fecthUrlByFull } from "@/actions/fetch_url_full";
 import { useToast } from "@/components/ui/use-toast";
 
+import { Container } from "@/components/container";
+import { saveQRImage } from "@/actions/save_qr_image";
+
+import { baseUrl } from "@/lib/consts";
+
 
 const formSchema = z.object({
     url: z.string().url('Not a  valid url')
@@ -30,8 +35,8 @@ const formSchema = z.object({
 
   
 const QRCodeGenetatorPage:NextPage = () => {
-
-    const { toast } = useToast()
+  const [imageUrl,setImageUrl] = useState('')
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,57 +46,33 @@ const QRCodeGenetatorPage:NextPage = () => {
   })
 
 
-  const [shorter,setshorter] = useState('');
+  function download(){
+    const url = `${baseUrl}api/images/${imageUrl}`
+    window.open(url)
+  }
+  function send(){}
 
-
-  function removeFirstCharacter(inputString: string): string {
-    // Check if the string is not empty
-    if (inputString.length > 0) {
-        // Return the substring starting from index 1 (excluding the first character)
-        return inputString.substring(1);
-    } else {
-        // If the string is empty, return it as is
-        return inputString;
+  async function generateQRCode(url: string, filename: string) {
+    try {
+       const imageUrl =  await saveQRImage(filename, url);
+       setImageUrl(imageUrl)
+        console.log(`QR code generated and saved as ${filename}`);
+    } catch (err) {
+        console.error('Error generating QR code:', err);
     }
 }
 
-function generateShortUrl(longUrl: string): string {
-  const hash = crypto.createHash('sha256').update(longUrl).digest('hex');
-  const shortUrl = removeFirstCharacter(hash.substr(0, 8));
-  return shortUrl;
-}
-
-async  function onSubmit(values: z.infer<typeof formSchema>) {
-  const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
-
- const url = await fecthUrlByFull(values.url);
- 
-
-if (!url){
-  const shorter = generateShortUrl(values.url);
-  const newUrl = await createUrl(values.url,shorter);
-  setshorter(baseUrl + shorter ) 
-}else{
-  setshorter(baseUrl + url.shorterUrl) 
-}
-}
-
-
-  async function copy(txt:string) {
-    if (navigator){
-      await navigator.clipboard.writeText(txt);
-       toast({
-        title: "Copy",
-        description: "Copy",
-      })
-    }
+  async  function onSubmit(values: z.infer<typeof formSchema>) {
+    const url = values.url;
+    const filename = 'qrcode.png';
+    generateQRCode(url, filename);
   }
 
+  console.log(imageUrl)
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className='flex flex-col items-center'>
-        <h1 className="text-3xl underline">My Tools</h1>
+      <Container>
+        <h1 className="text-3xl mb-24">QR Code Generator</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -104,40 +85,32 @@ if (!url){
                     <Input placeholder="https://www.google.com" {...field} />
                   </FormControl>
                   <FormDescription>
-                      Write your url , get a shorter version
+                      Gennerate QR code from your url
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
           /> 
-          <Button type="submit">Submit</Button>
+            <div className="flex items-center justify-center">
+            <Button type="submit">Create</Button>
+            </div>
           </form>
         </Form>
 
-        {shorter.length > 0 ? 
-       
-            <div className="flex flex-col justify-center items-center">
-              <Link href={shorter}> 
-                <h2 className="text-2xl underline">
-                  Here is your shorter url
-                </h2>
-              </Link>
-              <p>{shorter}</p>
-              <div className="flex justify-center  items-center"> 
-              
-              <Button onClick={ () => copy(shorter) }>Copy</Button>
-              <Link href={shorter}>Open</Link>
-              </div>
+
+      {
+      imageUrl && 
+          <div className="flex flex-col space-y-5">
+            <Image width={400} height={400} src={`${baseUrl}api/images/${imageUrl}`} alt={"qr"}/> 
+            <div className="flex justify-evenly">
+              <Button onClick={()=> download()}>Download</Button>
+              <Button onClick={()=> send()}>Send</Button>
+            </div>
           </div>
-       
-         :
-         <p>not yet</p>}
-      </div>
-    </main>
+      }
+      </Container>
+   
   );
-
-
-
  
 }
 export default QRCodeGenetatorPage

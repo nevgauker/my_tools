@@ -23,6 +23,7 @@ import { createUrl } from "@/actions/create_url";
 import Link from "next/link";
 import { fecthUrlByFull } from "@/actions/fetch_url_full";
 import { useToast } from "@/components/ui/use-toast";
+import { Container } from "@/components/container";
 
 
 const formSchema = z.object({
@@ -87,9 +88,8 @@ if (!url){
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className='flex flex-col items-center'>
-        <h1 className="text-3xl underline">My Tools</h1>
+    <Container>
+        <h1 className="text-3xl mb-24">Url Shorter Tool</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -107,8 +107,10 @@ if (!url){
                   <FormMessage />
                 </FormItem>
               )}
-          /> 
-          <Button type="submit">Submit</Button>
+          />
+          <div className="flex justify-center items-center">
+            <Button type="submit">Submit</Button>
+          </div> 
           </form>
         </Form>
 
@@ -129,9 +131,8 @@ if (!url){
           </div>
        
          :
-         <p>not yet</p>}
-      </div>
-    </main>
+         <></>}
+</Container>
   );
 }
 

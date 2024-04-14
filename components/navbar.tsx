@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({  }) => {
     <div className='flex justify-between items-center my-4'>
       <NavigationMenu dir={'ltr'}>
         <NavigationMenuList>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <NavigationMenuLink asChild className='group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 transition-transform hover:scale-110'>
               <Link href='/' legacyBehavior passHref>
                   <NavigationMenuLink className='group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 transition-transform hover:scale-110'>
@@ -62,22 +62,37 @@ const Navbar: React.FC<NavbarProps> = ({  }) => {
             
           </NavigationMenuContent>
 
+          </NavigationMenuItem> */}
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className='group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 transition-transform hover:scale-110'>
+              <Link href='/' legacyBehavior passHref>
+                  <NavigationMenuLink className='group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 transition-transform hover:scale-110'>
+                    <Image
+                      src={'/logo.png'}
+                      alt='logo'
+                      width={50}
+                      height={50}
+                    />
+                  </NavigationMenuLink>
+                </Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
+          
 
-          {/* <NavigationMenuItem>
-            <Link href={'portfolio'} legacyBehavior passHref>
+          <NavigationMenuItem>
+            <Link href={'/tools/url_shorter'} legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Portfolio
+                URL
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href={'/store'} legacyBehavior passHref>
+            <Link href={'/tools/qr_code_genetator'} legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Store
+                QR
               </NavigationMenuLink>
             </Link>
-          </NavigationMenuItem> */}
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </div>
