@@ -24,6 +24,7 @@ import Link from "next/link";
 import { fecthUrlByFull } from "@/actions/fetch_url_full";
 import { useToast } from "@/components/ui/use-toast";
 import { Container } from "@/components/container";
+import { baseUrl } from "@/lib/consts";
 
 
 const formSchema = z.object({
@@ -62,7 +63,7 @@ function generateShortUrl(longUrl: string): string {
 }
 
 async  function onSubmit(values: z.infer<typeof formSchema>) {
-  const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
+  // const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
 
  const url = await fecthUrlByFull(values.url);
  

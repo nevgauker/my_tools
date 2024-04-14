@@ -9,7 +9,6 @@ export default async function Shorter({ params }: {params: {shorter : string }})
       console.log(params.shorter)
       const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000/'
       const url = await fecthUrl(params.shorter);
-      console.log(url);
 
       if (url){
         //redirect

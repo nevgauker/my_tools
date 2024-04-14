@@ -33,7 +33,6 @@ export async function GET(req: NextRequest, { params }: { params: { filename: st
   try {
     const imagePath: string = path.join(process.cwd(), 'qrs', filename);
     const res  = await getImageData(imagePath);
-    console.log(res)
     if (res.error === undefined && res.data){
       const response = new NextResponse(res.data)
       response.headers.set('content-type', 'image/*');
